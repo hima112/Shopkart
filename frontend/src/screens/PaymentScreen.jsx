@@ -45,6 +45,16 @@ const PaymentScreen = () => {
               checked
               onChange={(e) => setPaymentMethod(e.target.value)}
             ></Form.Check>
+            <Form.Check
+              className='my-2'
+              type='radio'
+              label='Paytm'
+              id='Paytm'
+              name='paymentMethod'
+              value='Paytm'
+              checked={paymentMethod === 'Paytm'}
+              onChange={(e) => setPaymentMethod(e.target.value)}
+            ></Form.Check>
           </Col>
         </Form.Group>
 
