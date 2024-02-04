@@ -6,8 +6,11 @@ import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
-import { useGetOrderDetailsQuery, usePayOrderMutation, useGetPayPalClientIdQuery } from '../slices/ordersApiSlice';
+import { useGetOrderDetailsQuery, usePayOrderMutation, useGetPayPalClientIdQuery, useDeliverOrderMutation } from '../slices/ordersApiSlice';
 import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
+import GooglePayButton from '@google-pay/button-react';
+
+
 
 
 import React from 'react'
@@ -25,6 +28,8 @@ const OrderScreen = () => {
 
     const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
 
+    const [deliverOrder, {isLoading:loadingDeliver}]= useDeliverOrderMutation();
+
     const {
         data:paypal, 
         isLoading: loadingPayPal, 
@@ -32,6 +37,8 @@ const OrderScreen = () => {
     } =useGetPayPalClientIdQuery();
 
     const {userInfo} = useSelector((state)=> state.auth);
+
+    const cart = useSelector((state) => state.cart);
 
     useEffect(()=>{
         if(!errorPaypal && !loadingPayPal && paypal.clientId){
@@ -76,6 +83,10 @@ const OrderScreen = () => {
         toast.error(err.message);
     }
 
+    function onCancel(){
+      toast.error("Payment cancelled");
+    }
+
     function createOrder(data, actions){
         return actions.order.create({
             purchase_units: [
@@ -89,6 +100,16 @@ const OrderScreen = () => {
         .then((orderID) => {
             return orderID;
         });
+    }
+
+    const deliverOrderHandler = async () =>{
+      try{
+        await deliverOrder(orderId);
+        refetch();
+        toast.success('Order delivered');
+      } catch(err){
+        toast.error(err?.data?.message || err.message);
+      }
     }
 
     return isLoading ? (
@@ -208,23 +229,95 @@ const OrderScreen = () => {
                   {isPending ? (
                     <Loader />
                   ) : (
-                    <div>
-                      {/* THIS BUTTON IS FOR TESTING! REMOVE BEFORE PRODUCTION! */}
+                    <div className="d-grid gap-2">
+                     
+                      {/* THIS BUTTON IS FOR TESTING! */}
                        <Button
                         style={{ marginBottom: '10px' }}
                         onClick={onApproveTest}
                       >
                         Test Pay Order
                       </Button> 
-                      <div>
+
+                      <div className="d-grid gap-2">
+
+                      {cart.paymentMethod === "PayPal" ? (<div>
                         <PayPalButtons
                           createOrder={createOrder}
                           onApprove={onApprove}
                           onError={onError}
                         ></PayPalButtons>
+                      </div>)
+                      :(
+                        <GooglePayButton
+                        environment="TEST"
+                        paymentRequest={{
+                          apiVersion: 2,
+                          apiVersionMinor: 0,
+                          allowedPaymentMethods: [
+                            {
+                              type: 'CARD',
+                              parameters: {
+                                allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+                                allowedCardNetworks: ['MASTERCARD', 'VISA'],
+                              },
+                              tokenizationSpecification: {
+                                type: 'PAYMENT_GATEWAY',
+                                parameters: {
+                                  gateway: 'example',
+                                  gatewayMerchantId: 'exampleGatewayMerchantId',
+                                },
+                              },
+                            },
+                            // {
+                            //   type: 'UPI',
+                            //   parameters: {
+                            //     payeeAddress: 'himashreesah@axisbank', // Replace with your UPI ID
+                            //     payeeName: 'Himashree Sah',      // Replace with recipient's name
+                            //     transactionNote: 'Payment for goods/services', // Payment note
+                            //   },
+                            //   tokenizationSpecification: {
+                            //     type: 'DIRECT', // Tokenization type
+                            //   },
+                            // },
+                          ],
+                          merchantInfo: {
+                            merchantId: 'BCR2DN4T6HAORB3F',
+                            merchantName: 'Himashree Sah',
+                          },
+                          transactionInfo: {
+                            totalPriceStatus: 'FINAL',
+                            totalPriceLabel: 'Total',
+                            totalPrice: '${order.totalPrice}',
+                            currencyCode: 'USD',
+                            countryCode: 'US',
+                          },
+                        }}
+                          onLoadPaymentData={paymentRequest => {
+                            console.log('load payment data', paymentRequest);
+                          }}
+                          buttonSizeMode='fill'
+                          onError={onError}
+                          onCancel={onCancel}
+
+                        />
+                        )}
                       </div>
                     </div>
                   )}
+                </ListGroup.Item>
+              )}
+              {loadingDeliver && <Loader/>}
+
+              {userInfo && userInfo.isAdmin && order.isPaid && 
+              !order.isDelivered && (
+                <ListGroup.Item>
+                  <Button
+                  type='button'
+                  className='btn btn-block'
+                  onClick={deliverOrderHandler}>
+                    Mark As Delivered
+                  </Button>
                 </ListGroup.Item>
               )}
             </ListGroup>

@@ -105,25 +105,25 @@ const PlaceOrderScreen = () => {
               <ListGroup.Item>
                 <h2>Order Summary</h2>
               </ListGroup.Item>
-              <ListGroup.Item>
+              <ListGroup.Item style={{ borderBottom: 'none', paddingBottom: '5px' }}>
                 <Row>
                   <Col>Items</Col>
                   <Col>${cart.itemsPrice}</Col>
                 </Row>
               </ListGroup.Item>
-              <ListGroup.Item>
+              <ListGroup.Item style={{ borderBottom: 'none', paddingBottom: '5px' }}>
                 <Row>
                   <Col>Shipping</Col>
                   <Col>${cart.shippingPrice}</Col>
                 </Row>
               </ListGroup.Item>
-              <ListGroup.Item>
+              <ListGroup.Item style={{ borderBottom: 'none', paddingBottom: '5px' }}>
                 <Row>
                   <Col>Tax</Col>
                   <Col>${cart.taxPrice}</Col>
                 </Row>
               </ListGroup.Item>
-              <ListGroup.Item>
+              <ListGroup.Item style={{ borderBottom: 'none', paddingBottom: '5px' }}>
                 <Row>
                   <Col>Total</Col>
                   <Col>${cart.totalPrice}</Col>
@@ -133,6 +133,7 @@ const PlaceOrderScreen = () => {
                 {error && (
                   <Message variant='danger'>{error.data.message}</Message>
                 )}
+                {isLoading && <Loader />}
               </ListGroup.Item>
               <ListGroup.Item>
                 <Button
@@ -143,7 +144,6 @@ const PlaceOrderScreen = () => {
                 >
                   Place Order
                 </Button>
-                {isLoading && <Loader />}
               </ListGroup.Item>
             </ListGroup>
           </Card>

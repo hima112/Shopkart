@@ -48,11 +48,11 @@ const PaymentScreen = () => {
             <Form.Check
               className='my-2'
               type='radio'
-              label='Paytm'
-              id='Paytm'
+              label='Google Pay'
+              id='Google Pay'
               name='paymentMethod'
-              value='Paytm'
-              checked={paymentMethod === 'Paytm'}
+              value='Google Pay'
+              checked={paymentMethod === 'Google Pay'}
               onChange={(e) => setPaymentMethod(e.target.value)}
             ></Form.Check>
           </Col>

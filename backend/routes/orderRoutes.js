@@ -17,7 +17,7 @@ router
 
 router
     .route('/mine')
-    .get(protect,getMyOrders);
+    .get(protect, getMyOrders);
 
 router
     .route('/:id')
@@ -30,5 +30,6 @@ router
 router
     .route('/:id/deliver')
     .get(protect, admin, updateOrderToDelivered);
+
 
 export default router;
