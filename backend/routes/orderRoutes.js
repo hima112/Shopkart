@@ -29,7 +29,7 @@ router
 
 router
     .route('/:id/deliver')
-    .get(protect, admin, updateOrderToDelivered);
+    .put(protect, admin, updateOrderToDelivered);
 
 
 export default router;

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Row, Col, ListGroup, Image, Card, Button, ListGroupItem } from 'react-bootstrap';
+import { Row, Col, ListGroup, Image, Card, Button} from 'react-bootstrap';
 //import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
@@ -104,7 +104,7 @@ const OrderScreen = () => {
 
     const deliverOrderHandler = async () =>{
       try{
-        await deliverOrder(orderId);
+        await deliverOrder(orderId).unwrap();
         refetch();
         toast.success('Order delivered');
       } catch(err){
@@ -288,7 +288,7 @@ const OrderScreen = () => {
                           transactionInfo: {
                             totalPriceStatus: 'FINAL',
                             totalPriceLabel: 'Total',
-                            totalPrice: '${order.totalPrice}',
+                            totalPrice: `${order.totalPrice}`,
                             currencyCode: 'USD',
                             countryCode: 'US',
                           },
