@@ -11,6 +11,7 @@ import {
 } from "../controllers/productController.js";
 import mongoose from "mongoose";
 import {protect, admin} from '../middleware/loginMiddleware.js'
+import checkObjectId from "../middleware/checkObjectId.js";
 
 
 router
@@ -23,12 +24,12 @@ router
 
 router
     .route('/:id')
-    .get(getProductById)
-    .put(protect, admin, updateProduct)
-    .delete(protect, admin, deleteProduct);
+    .get(getProductById, checkObjectId)
+    .put(protect, admin, checkObjectId,updateProduct)
+    .delete(protect, admin,checkObjectId, deleteProduct);
 
 router
     .route('/:id/reviews')
-    .post(protect, createProductReview);
+    .post(protect, checkObjectId, createProductReview);
 
 export default router;
