@@ -7,6 +7,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useLogoutMutation } from '../slices/usersApiSlice';
 import {logout} from '../slices/authSlice'
 import { useNavigate } from 'react-router-dom';
+import SearchBox from './SearchBox';
 
 
 const Header = () => {
@@ -40,12 +41,17 @@ const Header = () => {
                     ShopKart
                 </Navbar.Brand>
                 </LinkContainer>
-
+               
+                
+                
                 <Navbar.Toggle aria-controls="basic-navbar-nav"/>
                 <Navbar.Collapse id="basic-navbar-nav">
-                    <Nav className='ms-auto'>
+                    <Container fluid className='mr-10'>
+                        <SearchBox /> 
+                    </Container>
+                        <Nav className='ms-auto'>
                         <LinkContainer to="/cart">
-                            <Nav.Link>
+                            <Nav.Link className="d-flex align-items-center">
                                 <FaShoppingCart/>Cart
                                 {
                                     cartItems.length >0 && (
