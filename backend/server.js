@@ -1,7 +1,7 @@
 import express from "express";
-// import dotenv from "dotenv";
+import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
-// dotenv.config();
+dotenv.config();
 
 import path from 'path';
 
@@ -41,6 +41,7 @@ if (process.env.NODE_ENV === 'production') {
       res.sendFile(path.resolve(__dirname, 'frontend', 'build', 'index.html'))
     );
   } else {
+    
     const __dirname = path.resolve();
     app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
     app.get('/', (req, res) => {
